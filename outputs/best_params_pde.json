@@ -1,0 +1,41 @@
+{
+  "XGBoost": {
+    "n_estimators": 278,
+    "max_depth": 4,
+    "learning_rate": 0.06333268775321843,
+    "subsample": 0.5704621124873813,
+    "colsample_bytree": 0.8813181884524238,
+    "reg_alpha": 0.0002359137306347715,
+    "reg_lambda": 8.598737339212267,
+    "min_child_weight": 8,
+    "gamma": 0.1987156815341724
+  },
+  "LightGBM": {
+    "n_estimators": 439,
+    "max_depth": 6,
+    "learning_rate": 0.028652270385594494,
+    "num_leaves": 55,
+    "reg_alpha": 8.040392213999167,
+    "reg_lambda": 0.3126489783961939,
+    "subsample": 0.916238163379156,
+    "colsample_bytree": 0.7101664051224856,
+    "min_child_samples": 19
+  },
+  "CatBoost": {
+    "iterations": 100,
+    "learning_rate": 0.016613588032388677,
+    "depth": 4,
+    "l2_leaf_reg": 3.3094036254179353
+  },
+  "Random Forest": {
+    "n_estimators": 174,
+    "max_depth": 15,
+    "min_samples_split": 16,
+    "min_samples_leaf": 10,
+    "max_features": null
+  },
+  "Logistic Regression": {
+    "C": 0.0010907785690006122,
+    "solver": "lbfgs"
+  }
+}
