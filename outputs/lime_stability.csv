@@ -1,0 +1,5 @@
+Dataset,Model,sigma_bar
+eclipse,ExtraTrees,2.0150840358784813e-05
+eclipse,RandomForest,0.00017253993047324645
+mylyn,ExtraTrees,0.00010669634386302205
+mylyn,KNN,0.0015185472993609049
