@@ -1,0 +1,46 @@
+Model_A,Model_B,b,c,p_value,Significant
+Logistic Regression,Stacking Ensemble,144,43,0.0,True
+SVM (RBF),Stacking Ensemble,109,17,0.0,True
+Gradient Boosting,XGBoost,15,76,0.0,True
+Random Forest,Stacking Ensemble,145,19,0.0,True
+Random Forest,Gradient Boosting,78,18,0.0,True
+KNN,Stacking Ensemble,122,18,0.0,True
+KNN,Gradient Boosting,54,16,0.0,True
+SVM (RBF),Custom (BalancedRF),22,62,0.0,True
+Gradient Boosting,LightGBM,20,79,0.0,True
+LightGBM,Stacking Ensemble,145,20,0.0,True
+Stacking Ensemble,Custom (BalancedRF),31,163,0.0,True
+CatBoost,Stacking Ensemble,136,16,0.0,True
+XGBoost,Stacking Ensemble,150,23,0.0,True
+Gradient Boosting,Custom (BalancedRF),22,88,0.0,True
+Gradient Boosting,Stacking Ensemble,76,10,0.0,True
+Gradient Boosting,CatBoost,22,76,0.0,True
+SVM (RBF),XGBoost,20,55,0.0001,True
+SVM (RBF),Random Forest,19,53,0.0001,True
+SVM (RBF),LightGBM,21,54,0.0002,True
+KNN,Custom (BalancedRF),21,49,0.0011,True
+SVM (RBF),CatBoost,21,49,0.0011,True
+Logistic Regression,Custom (BalancedRF),29,60,0.0013,True
+Logistic Regression,Random Forest,17,42,0.0015,True
+SVM (RBF),Gradient Boosting,45,19,0.0016,True
+Logistic Regression,XGBoost,21,47,0.0022,True
+KNN,XGBoost,16,39,0.0027,True
+Logistic Regression,LightGBM,18,42,0.0027,True
+Logistic Regression,Gradient Boosting,84,49,0.003,True
+KNN,Random Forest,16,38,0.0038,True
+KNN,LightGBM,16,37,0.0055,True
+Logistic Regression,CatBoost,14,33,0.0079,True
+KNN,CatBoost,18,34,0.0365,True
+CatBoost,Custom (BalancedRF),15,27,0.0884,False
+SVM (RBF),KNN,19,31,0.1189,False
+Random Forest,CatBoost,9,3,0.146,False
+XGBoost,CatBoost,14,7,0.1892,False
+LightGBM,Custom (BalancedRF),11,18,0.2649,False
+LightGBM,CatBoost,9,4,0.2668,False
+Random Forest,Custom (BalancedRF),12,18,0.3616,False
+XGBoost,Custom (BalancedRF),8,13,0.3833,False
+Logistic Regression,SVM (RBF),53,44,0.4168,False
+XGBoost,LightGBM,5,3,0.7266,False
+Logistic Regression,KNN,37,40,0.8199,False
+Random Forest,LightGBM,3,2,1.0,False
+Random Forest,XGBoost,4,5,1.0,False
