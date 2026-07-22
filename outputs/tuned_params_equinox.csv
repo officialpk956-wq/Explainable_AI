@@ -1,0 +1,9 @@
+,n_estimators,min_samples_leaf,max_depth,learning_rate,num_leaves,C,gamma,n_neighbors
+RandomForest,300.0,4.0,,,,,,
+XGBoost,300.0,,7.0,0.1,,,,
+LightGBM,200.0,,,0.05,31.0,,,
+GradientBoosting,200.0,,3.0,0.05,,,,
+ExtraTrees,300.0,4.0,,,,,,
+LogisticRegression,,,,,,1.0,,
+SVC,,,,,,0.1,scale,
+KNN,,,,,,,,15.0
