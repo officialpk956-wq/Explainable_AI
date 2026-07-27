@@ -1,0 +1,56 @@
+Model_A,Model_B,W_stat,p_value,Significant
+Logistic Regression,SVM (RBF),0.0,0.125,False
+SVM (RBF),Random Forest,2.0,0.1875,False
+Random Forest,Gradient Boosting,2.0,0.1875,False
+Custom (BalancedRF),Easy Ensemble,2.0,0.1875,False
+LightGBM,Custom (BalancedRF),2.0,0.1875,False
+Gradient Boosting,CatBoost,2.0,0.1875,False
+Gradient Boosting,LightGBM,2.0,0.1875,False
+Random Forest,Custom (BalancedRF),2.0,0.1875,False
+CatBoost,Custom (BalancedRF),2.0,0.1875,False
+SVM (RBF),CatBoost,1.0,0.25,False
+SVM (RBF),LightGBM,1.0,0.25,False
+Logistic Regression,Custom (BalancedRF),3.0,0.3125,False
+SVM (RBF),KNN,3.0,0.3125,False
+Logistic Regression,Gradient Boosting,3.0,0.3125,False
+SVM (RBF),Stacking Ensemble,4.0,0.4375,False
+KNN,Custom (BalancedRF),4.0,0.4375,False
+XGBoost,CatBoost,4.0,0.4375,False
+XGBoost,LightGBM,4.0,0.4375,False
+SVM (RBF),Easy Ensemble,1.0,0.5,False
+Random Forest,XGBoost,0.0,0.5,False
+Logistic Regression,Easy Ensemble,1.0,0.5,False
+XGBoost,Stacking Ensemble,0.0,0.5,False
+Gradient Boosting,Stacking Ensemble,5.0,0.625,False
+XGBoost,Custom (BalancedRF),3.0,0.625,False
+KNN,CatBoost,5.0,0.625,False
+KNN,LightGBM,5.0,0.625,False
+SVM (RBF),Gradient Boosting,5.0,0.625,False
+Stacking Ensemble,Custom (BalancedRF),5.0,0.625,False
+Gradient Boosting,XGBoost,3.0,0.625,False
+SVM (RBF),XGBoost,5.0,0.625,False
+Logistic Regression,KNN,5.0,0.625,False
+Random Forest,Stacking Ensemble,2.0,0.75,False
+Stacking Ensemble,Easy Ensemble,2.0,0.75,False
+Logistic Regression,Stacking Ensemble,6.0,0.8125,False
+KNN,Easy Ensemble,6.0,0.8125,False
+Logistic Regression,XGBoost,6.0,0.8125,False
+Random Forest,LightGBM,6.0,0.8125,False
+Random Forest,CatBoost,6.0,0.8125,False
+Gradient Boosting,Easy Ensemble,6.0,0.8125,False
+KNN,Gradient Boosting,6.0,0.8125,False
+KNN,Stacking Ensemble,7.0,1.0,False
+SVM (RBF),Custom (BalancedRF),7.0,1.0,False
+KNN,Random Forest,7.0,1.0,False
+KNN,XGBoost,7.0,1.0,False
+Logistic Regression,Random Forest,7.0,1.0,False
+Logistic Regression,CatBoost,1.0,1.0,False
+Logistic Regression,LightGBM,1.0,1.0,False
+Random Forest,Easy Ensemble,7.0,1.0,False
+LightGBM,Easy Ensemble,0.0,1.0,False
+LightGBM,Stacking Ensemble,3.0,1.0,False
+XGBoost,Easy Ensemble,7.0,1.0,False
+Gradient Boosting,Custom (BalancedRF),0.0,1.0,False
+CatBoost,Easy Ensemble,0.0,1.0,False
+CatBoost,Stacking Ensemble,3.0,1.0,False
+LightGBM,CatBoost,,,False
