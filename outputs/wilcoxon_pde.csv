@@ -1,0 +1,56 @@
+Model_A,Model_B,W_stat,p_value,Significant
+Logistic Regression,Gradient Boosting,0.0,0.0625,False
+Logistic Regression,Random Forest,0.0,0.0625,False
+Logistic Regression,LightGBM,0.0,0.0625,False
+Logistic Regression,XGBoost,0.0,0.0625,False
+Logistic Regression,Stacking Ensemble,0.0,0.0625,False
+Logistic Regression,Custom (BalancedRF),0.0,0.0625,False
+SVM (RBF),Gradient Boosting,0.0,0.0625,False
+SVM (RBF),Custom (BalancedRF),0.0,0.0625,False
+Random Forest,Gradient Boosting,0.0,0.0625,False
+LightGBM,Custom (BalancedRF),0.0,0.0625,False
+XGBoost,Custom (BalancedRF),0.0,0.0625,False
+Gradient Boosting,Easy Ensemble,0.0,0.0625,False
+Gradient Boosting,CatBoost,0.0,0.0625,False
+Gradient Boosting,Stacking Ensemble,0.0,0.0625,False
+Gradient Boosting,XGBoost,0.0,0.0625,False
+Gradient Boosting,LightGBM,0.0,0.0625,False
+LightGBM,Easy Ensemble,0.0,0.0625,False
+CatBoost,Custom (BalancedRF),0.0,0.0625,False
+Custom (BalancedRF),Easy Ensemble,0.0,0.0625,False
+XGBoost,Stacking Ensemble,0.0,0.125,False
+Stacking Ensemble,Easy Ensemble,1.0,0.125,False
+XGBoost,Easy Ensemble,1.0,0.125,False
+Random Forest,Custom (BalancedRF),1.0,0.125,False
+CatBoost,Stacking Ensemble,1.0,0.125,False
+Random Forest,Easy Ensemble,1.0,0.125,False
+KNN,Custom (BalancedRF),1.0,0.125,False
+KNN,Gradient Boosting,1.0,0.125,False
+Stacking Ensemble,Custom (BalancedRF),1.0,0.125,False
+Logistic Regression,SVM (RBF),2.0,0.1875,False
+Logistic Regression,KNN,2.0,0.1875,False
+SVM (RBF),Stacking Ensemble,2.0,0.1875,False
+SVM (RBF),XGBoost,3.0,0.3125,False
+Logistic Regression,CatBoost,3.0,0.3125,False
+LightGBM,CatBoost,3.0,0.3125,False
+XGBoost,CatBoost,3.0,0.3125,False
+SVM (RBF),Random Forest,3.0,0.3125,False
+SVM (RBF),LightGBM,3.0,0.3125,False
+Random Forest,CatBoost,3.0,0.3125,False
+KNN,Easy Ensemble,3.0,0.3125,False
+Gradient Boosting,Custom (BalancedRF),2.0,0.375,False
+Random Forest,Stacking Ensemble,2.0,0.375,False
+LightGBM,Stacking Ensemble,4.0,0.4375,False
+KNN,Stacking Ensemble,4.0,0.4375,False
+SVM (RBF),KNN,4.0,0.4375,False
+SVM (RBF),Easy Ensemble,5.0,0.625,False
+KNN,XGBoost,5.0,0.625,False
+KNN,LightGBM,5.0,0.625,False
+SVM (RBF),CatBoost,6.0,0.8125,False
+Logistic Regression,Easy Ensemble,6.0,0.8125,False
+KNN,Random Forest,4.0,0.875,False
+KNN,CatBoost,7.0,1.0,False
+Random Forest,LightGBM,7.0,1.0,False
+Random Forest,XGBoost,7.0,1.0,False
+XGBoost,LightGBM,7.0,1.0,False
+CatBoost,Easy Ensemble,7.0,1.0,False
