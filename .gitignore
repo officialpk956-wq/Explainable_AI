@@ -1,1 +1,20 @@
 .commit_progress
+.venv-audit/
+__pycache__/
+
+# EMSE strengthening work: large regenerable data/build outputs, not source
+outputs/
+data_external/
+catboost_info/
+paper/emse/artifact/
+paper/emse/artifact_previous/
+paper/emse/artifact_primary/
+paper/emse/preview/
+paper/emse/preview_v2/
+paper/emse/upload/
+paper/emse/*.zip
+paper/emse/main.aux
+paper/emse/main.blg
+paper/emse/main.log
+paper/emse/main.out
+paper/emse/build_output.log
