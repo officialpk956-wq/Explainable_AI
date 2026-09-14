@@ -1,0 +1,120 @@
+{
+  "version": "external-static-v1",
+  "recorded_utc": "2026-09-10T05:06:24.252438+00:00",
+  "projects": [
+    "activemq-5.8.0",
+    "derby-10.5.1.1",
+    "groovy-1_5_7",
+    "hbase-0.95.2",
+    "hive-0.12.0",
+    "jruby-1.5.0",
+    "wicket-1.5.3"
+  ],
+  "repository_commit": "1931ca6537b00234b80e3d96f6c76c97524841f2",
+  "features": [
+    "CountDeclMethodPrivate",
+    "AvgLineCode",
+    "CountLine",
+    "MaxCyclomatic",
+    "CountDeclMethodDefault",
+    "AvgEssential",
+    "CountDeclClassVariable",
+    "SumCyclomaticStrict",
+    "AvgCyclomatic",
+    "AvgLine",
+    "CountDeclClassMethod",
+    "AvgLineComment",
+    "AvgCyclomaticModified",
+    "CountDeclFunction",
+    "CountLineComment",
+    "CountDeclClass",
+    "CountDeclMethod",
+    "SumCyclomaticModified",
+    "CountLineCodeDecl",
+    "CountDeclMethodProtected",
+    "CountDeclInstanceVariable",
+    "MaxCyclomaticStrict",
+    "CountDeclMethodPublic",
+    "CountLineCodeExe",
+    "SumCyclomatic",
+    "SumEssential",
+    "CountStmtDecl",
+    "CountLineCode",
+    "CountStmtExe",
+    "RatioCommentToCode",
+    "CountLineBlank",
+    "CountStmt",
+    "MaxCyclomaticModified",
+    "CountSemicolon",
+    "AvgLineBlank",
+    "CountDeclInstanceMethod",
+    "AvgCyclomaticStrict",
+    "PercentLackOfCohesion",
+    "MaxInheritanceTree",
+    "CountClassDerived",
+    "CountClassCoupled",
+    "CountClassBase",
+    "CountInput_Max",
+    "CountInput_Mean",
+    "CountInput_Min",
+    "CountOutput_Max",
+    "CountOutput_Mean",
+    "CountOutput_Min",
+    "CountPath_Max",
+    "CountPath_Mean",
+    "CountPath_Min",
+    "MaxNesting_Max",
+    "MaxNesting_Mean",
+    "MaxNesting_Min"
+  ],
+  "label": "RealBug",
+  "seeds": [
+    101,
+    102,
+    103
+  ],
+  "source_cap_per_project": 400,
+  "outer_tuning_folds": 3,
+  "oof_folds": 3,
+  "teacher_trees": 32,
+  "teacher_depth": 5,
+  "teachers": [
+    "RandomForest",
+    "ExtraTrees"
+  ],
+  "models": [
+    "RandomForest",
+    "LogisticRegression"
+  ],
+  "arms": [
+    "original",
+    "shap_sum",
+    "uniform_sum",
+    "shuffled_sum",
+    "select_shap",
+    "select_random",
+    "p_aug",
+    "ps_aug"
+  ],
+  "tuning_regimes": [
+    "independent",
+    "shared_baseline"
+  ],
+  "candidates": {
+    "RandomForest": [
+      6,
+      null
+    ],
+    "LogisticRegression": [
+      0.1,
+      1.0
+    ]
+  },
+  "downstream_trees": 32,
+  "class_weight": "balanced",
+  "resampling": "none",
+  "selection_fraction": 0.5,
+  "preprocessing": "Training-median imputation and training-constant removal; LR signed log then RobustScaler; trees no log/scaling. Only 54 static code metrics, excluding all defect columns, IDs and process metrics.",
+  "inference": "Equal-target descriptive paired effects; no independent-seed tests or population CIs; shared training projects explicitly acknowledged.",
+  "status": "Exploratory extension; frozen before any new model results. No claim of preregistration."
+}

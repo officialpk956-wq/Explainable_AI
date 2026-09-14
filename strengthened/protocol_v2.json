@@ -1,0 +1,115 @@
+{
+  "version": "external-static-v2",
+  "supersedes": "external-static-v1",
+  "status": "Exploratory extension of an exploratory extension. Designed after v1 results were known and frozen before any v2 model execution. Not a preregistration.",
+  "rationale": "v1 established descriptive effects on seven documented projects but contained no uninformative reference, no signal-loss control and no adaptation comparator, so a near-zero attribution effect could not be distinguished from an insensitive harness. v2 adds those three controls, a dimension-matched augmentation control, ten source seeds and four downstream learners.",
+  "projects": [
+    "activemq-5.8.0",
+    "derby-10.5.1.1",
+    "groovy-1_5_7",
+    "hbase-0.95.2",
+    "hive-0.12.0",
+    "jruby-1.5.0",
+    "wicket-1.5.3"
+  ],
+  "repository_commit": "1931ca6537b00234b80e3d96f6c76c97524841f2",
+  "label": "RealBug",
+  "features_from": "protocol.json",
+  "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110
+  ],
+  "source_cap_per_project": 400,
+  "outer_tuning_folds": 3,
+  "oof_folds": 3,
+  "teacher_trees": 32,
+  "teacher_depth": 5,
+  "teachers": [
+    "RandomForest",
+    "ExtraTrees"
+  ],
+  "downstream_trees": 32,
+  "class_weight": "balanced; XGBoost uses scale_pos_weight = negatives/positives computed from its own training labels",
+  "resampling": "none",
+  "selection_fraction": 0.5,
+  "coral_ridge": 0.001,
+  "models": [
+    "RandomForest",
+    "LogisticRegression",
+    "ExtraTrees",
+    "XGBoost"
+  ],
+  "candidates": {
+    "RandomForest": [
+      6,
+      null
+    ],
+    "LogisticRegression": [
+      0.1,
+      1.0
+    ],
+    "ExtraTrees": [
+      6,
+      null
+    ],
+    "XGBoost": [
+      3,
+      5
+    ]
+  },
+  "arms": [
+    "original",
+    "shap_sum",
+    "uniform_sum",
+    "shuffled_sum",
+    "select_shap",
+    "select_random",
+    "p_aug",
+    "ps_aug",
+    "pn_aug",
+    "coral",
+    "prevalence",
+    "permuted_original"
+  ],
+  "arms_added_in_v2": [
+    "pn_aug",
+    "coral",
+    "prevalence",
+    "permuted_original"
+  ],
+  "arm_definitions": {
+    "original": "Imputed, training-constant-filtered static metrics.",
+    "shap_sum": "Features multiplied by unit-sum mean absolute out-of-fold SHAP weights.",
+    "uniform_sum": "Features divided by the active feature count. Matches the mean multiplier magnitude of shap_sum, carries no attribution information.",
+    "shuffled_sum": "shap_sum weights permuted across features. Matches the multiplier distribution exactly, destroys the feature/attribution correspondence.",
+    "select_shap": "Top half of active features by SHAP weight.",
+    "select_random": "Equal-sized random subset of active features.",
+    "p_aug": "Original features plus the cross-fitted teacher probability.",
+    "ps_aug": "Original features plus the teacher probability plus one SHAP column per active feature.",
+    "pn_aug": "NEW. Original features plus the teacher probability plus uninformative Gaussian columns, one per active feature, so the column count equals ps_aug exactly. Each column is drawn independently from a normal distribution whose mean and standard deviation are taken from the corresponding source SHAP column. Source and target draws use a dedicated generator seeded from the run seed. Isolates an attribution-specific augmentation effect from a generic added-dimension penalty.",
+    "coral": "NEW. Source covariates whitened and recoloured to the pseudo-target covariance (CORAL). Documented adaptation comparator. Reads unlabelled pseudo-target covariates; the target response is never used.",
+    "prevalence": "NEW. Featureless reference. Constant prediction equal to the source training positive rate. Independent of the downstream learner by construction; identical values across model cells are expected and asserted.",
+    "permuted_original": "NEW. Original features, but downstream training labels are permuted within each source project so per-project class counts are preserved. Tuning also uses the permuted labels. Scored against true target labels. Measures whether the harness detects total source-signal loss."
+  },
+  "tuning_regimes": [
+    "independent",
+    "shared_baseline"
+  ],
+  "tuning": "Three-fold GroupKFold over source projects, ROC-AUC. Two candidates per learner, equal budget for every arm including controls. Representations and teachers are rebuilt inside each source-validation fold. 'independent' selects per arm; 'shared_baseline' reuses the arm-agnostic 'original' choice.",
+  "preprocessing": "Training-median imputation and training-constant removal. LogisticRegression uses signed log then RobustScaler; tree and boosting learners use neither. Only the 54 static code metrics, excluding all defect columns, identifiers and process metrics.",
+  "target_information_boundary": "Target responses enter scoring only, never fitting, tuning, imputation, feature screening, attribution construction or hyperparameter selection. The coral arm additionally reads unlabelled pseudo-target covariates and is the only transductive arm; this is disclosed wherever coral is reported.",
+  "aggregation": "Within each target, average over repeats, teachers and learners as specified per table, then take the equal-target mean. Leave-one-target-out aggregation sensitivity removes each target from that aggregate in turn WITHOUT retraining and WITHOUT removing that project from the remaining targets' source pools. Repeat variability is reported separately.",
+  "inference": "Descriptive fixed-benchmark effects. Target rotations share training projects, so they are not independent replications. No significance tests over overlapping seeds, no confidence intervals, no equivalence bounds, no retrospective power claim. A successful control demonstrates detectable signal loss or adaptation effect; it does not establish power to prove equivalence near zero.",
+  "sensitivity_runs": {
+    "source_cap": "Predeclared subset comparing 400 against 800 rows per source project, seeds 101-103, both teachers, all seven targets, all arms and both regimes. Written to a separate output directory."
+  },
+  "learner_selection_note": "The fourth learner was chosen on measured runtime before any v2 result existed. HistGradientBoosting was benchmarked at 7.7-13.0 s per fit against 0.15-0.63 s for XGBoost on the same 2400x54 and 2400x109 shapes, which made the full grid infeasible. No accuracy result influenced this choice."
+}

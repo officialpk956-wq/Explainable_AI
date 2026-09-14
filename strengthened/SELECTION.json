@@ -1,0 +1,16 @@
+{
+  "recorded_utc": "2026-09-10T05:03:48.929308+00:00",
+  "commit": "1931ca6537b00234b80e3d96f6c76c97524841f2",
+  "projects": [
+    "activemq-5.8.0",
+    "derby-10.5.1.1",
+    "groovy-1_5_7",
+    "hbase-0.95.2",
+    "hive-0.12.0",
+    "jruby-1.5.0",
+    "wicket-1.5.3"
+  ],
+  "selection": "All seven JIRA project families absent from the earlier fixed benchmark, excluding camel and lucene. Highest listed non-beta/non-preview release per family; hbase 0.95.2 retained as explicitly listed. Selection based on repository inventory, not predictive outcomes.",
+  "status": "pre-download selection; exploratory extension after earlier results",
+  "design": "Leave one project family out; remaining six sources, max 400 source rows per project per seed. Three source-group tuning folds; two candidates per arm with independent choice and shared-baseline sensitivity. RF/ExtraTrees teachers, RF/LR downstream, three seeds 101-103; 32 trees, teacher depth5; 3-fold OOF. Weighting/uniform/shuffled, selection/random, prediction/SHAP augmentation. No target-labelled fitting."
+}
