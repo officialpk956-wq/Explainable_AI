@@ -1,0 +1,46 @@
+{
+  "version": "lime-confound-v1",
+  "status": "Frozen before any execution on the external benchmark. An earlier version of this analysis was run on the local Eclipse and PROMISE data, whose provenance is uncertain; those results are not reused, not pooled and not cited as support. This is a fresh execution on the documented external corpus.",
+
+  "question": "Is LIME's measured explanation instability confounded by how well a local linear surrogate fits the model being explained? If it is, ranking models by explanation stability partly ranks them by linearity, and stability cannot be used on its own as an explanation-quality criterion.",
+
+  "why_it_needs_a_frozen_protocol": "Measured instability mixes at least three sources of variation that prior reporting does not separate: the explainer's own sampling randomness, the randomness of the model being explained, and the choice of which instances are explained. A correlation between instability and surrogate fit is only interpretable once these are held apart, because two of the three can move both quantities at once.",
+
+  "projects": [
+    "activemq-5.8.0", "derby-10.5.1.1", "groovy-1_5_7", "hbase-0.95.2",
+    "hive-0.12.0", "jruby-1.5.0", "wicket-1.5.3"
+  ],
+  "label": "RealBug",
+  "features_from": "protocol.json",
+  "source_cap_per_project": 400,
+  "models": ["RandomForest", "LogisticRegression", "ExtraTrees", "XGBoost", "SVCRBF"],
+  "model_candidate_index": 0,
+
+  "design": "Leave-one-project-out, matching the primary study. For each held-out target the model is fitted on the other six projects and explanations are computed on target rows. The target response is never used for fitting, instance selection or explanation.",
+
+  "variance_decomposition": {
+    "explainer": "Fixed fitted model, fixed instance set. Vary only the LIME random seed across n_explainer_seeds. The spread of the resulting attribution vectors is explainer randomness.",
+    "model": "Fixed LIME seed, fixed instance set. Refit the downstream model under n_model_seeds different training seeds. The spread across those fits is model-training randomness.",
+    "instances": "Fixed fitted model, fixed LIME seed. Draw n_instance_sets disjoint instance sets. The spread across sets is instance-choice variation.",
+    "note": "All three are reported separately. The headline correlation uses explainer randomness only, because that is the quantity the stability literature reports, and mixing in the other two would confound the confound."
+  },
+
+  "instability": "For one instance, take the attribution vectors across the varied source, L2-normalise each, and record the mean per-feature standard deviation. Instance values are averaged to give sigma-bar for that (target, model) cell.",
+  "surrogate_fit": "LIME's own reported local R-squared for the ridge surrogate at that instance, averaged over instances and over the same varied source. This is the explainer's fit to the model in the neighbourhood, not a fit to the labels.",
+
+  "n_instances": 10,
+  "n_explainer_seeds": 10,
+  "n_model_seeds": 5,
+  "n_instance_sets": 3,
+  "lime_num_samples": 2500,
+  "lime_num_features": 54,
+  "instance_selection": "Deterministic: the n_instances target rows whose index is evenly spaced through the target file after sorting by file identifier. Independent of the response and of any model output.",
+
+  "primary_analysis": "Within each target, Spearman correlation across the five models between mean surrogate R-squared and mean sigma-bar. Reported per target and as the count of targets with a negative correlation. Seven targets is a small number, so the count is reported rather than a pooled test statistic.",
+
+  "inference": "Descriptive. Seven targets, five models, one explainer, one benchmark. No significance test across targets that share source projects, no confidence interval, no causal claim. A negative correlation would show that the instability measure moves with surrogate fit on this benchmark; it would not establish that surrogate fit causes instability, and no intervention experiment is planned here.",
+
+  "falsification": "The claim is not supported if the per-target correlations are not predominantly negative, or if the correlation disappears once explainer randomness is isolated from model-training randomness and instance choice.",
+
+  "relationship_to_earlier_work": "An earlier analysis on local bug-history data reported a negative correlation with a larger instance and sample budget. Those numbers are not carried forward. If the direction agrees, that is a consistency observation across different data, not a replication in the statistical sense, and it will be described that way."
+}
