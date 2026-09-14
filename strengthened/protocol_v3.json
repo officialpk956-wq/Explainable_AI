@@ -1,0 +1,89 @@
+{
+  "version": "external-static-v3",
+  "supersedes": "external-static-v2",
+  "status": "Exploratory extension. Designed after v2 results were known, in response to a technical review, and frozen before any v3 model execution. Not a preregistration.",
+  "rationale": "v2 reported a weighting effect averaged over three learners that cannot respond to a positive rescaling, used an augmentation control that matched width and marginal scale but not joint structure, cross-fitted the attribution teacher without holding out whole projects, and drove every random choice from one seed. v3 addresses each: a scale-sensitive fifth learner and per-learner weighting reporting, a row-permutation augmentation control with multiple draws, a predeclared project-grouped teacher sensitivity, separately spawned random streams, and a predeclared capacity sensitivity.",
+
+  "projects": [
+    "activemq-5.8.0", "derby-10.5.1.1", "groovy-1_5_7", "hbase-0.95.2",
+    "hive-0.12.0", "jruby-1.5.0", "wicket-1.5.3"
+  ],
+  "repository_commit": "1931ca6537b00234b80e3d96f6c76c97524841f2",
+  "label": "RealBug",
+  "features_from": "protocol.json",
+
+  "seeds": [101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
+  "control_seed_offset": 0,
+  "source_cap_per_project": 400,
+  "outer_tuning_folds": 3,
+  "oof_folds": 3,
+  "teacher_cv": "stratified",
+  "teacher_trees": 32,
+  "teacher_depth": 5,
+  "teachers": ["RandomForest", "ExtraTrees"],
+  "downstream_trees": 32,
+  "svc_calibration_folds": 3,
+  "class_weight": "balanced; XGBoost uses scale_pos_weight = negatives/positives from its own training labels",
+  "resampling": "none",
+  "selection_fraction": 0.5,
+  "coral_ridge": 0.001,
+  "control_draws": 3,
+
+  "models": ["RandomForest", "LogisticRegression", "ExtraTrees", "XGBoost", "SVCRBF"],
+  "scale_sensitive_models": ["LogisticRegression", "SVCRBF"],
+  "candidates": {
+    "RandomForest": [6, null],
+    "LogisticRegression": [0.1, 1.0],
+    "ExtraTrees": [6, null],
+    "XGBoost": [3, 5],
+    "SVCRBF": [1.0, 10.0]
+  },
+  "learner_note": "SVCRBF is an RBF-kernel support vector classifier wrapped in CalibratedClassifierCV(ensemble=False) because SVC(probability=True) is deprecated from scikit-learn 1.9. It is included because a positive per-feature rescaling cannot change an axis-aligned tree split, so RandomForest, ExtraTrees and XGBoost cannot respond to the weighting arms by construction. Weighting results are therefore reported per learner, and the scale-sensitive subset is reported separately from the all-learner aggregate.",
+
+  "arms": [
+    "original", "shap_sum", "uniform_sum", "shuffled_sum", "select_shap", "select_random",
+    "p_aug", "ps_aug", "pn_aug", "pr_aug", "coral", "prevalence", "permuted_original"
+  ],
+  "arms_added_in_v3": ["pr_aug"],
+  "multi_draw_arms": ["pn_aug", "pr_aug"],
+  "arm_definitions": {
+    "original": "Imputed, training-constant-filtered static metrics.",
+    "shap_sum": "Features multiplied by unit-sum mean absolute out-of-fold SHAP weights.",
+    "uniform_sum": "Features divided by the active feature count. Matches mean multiplier magnitude, carries no attribution information.",
+    "shuffled_sum": "shap_sum weights permuted across features. Matches the multiplier distribution exactly, destroys the feature/attribution correspondence.",
+    "select_shap": "Top half of active features by SHAP weight.",
+    "select_random": "Equal-sized random subset of active features.",
+    "p_aug": "Original features plus the cross-fitted teacher probability.",
+    "ps_aug": "Original features plus the teacher probability plus one SHAP column per active feature.",
+    "pn_aug": "Original features plus the teacher probability plus independent Gaussian columns, one per active feature, matched to the source SHAP column means and standard deviations. Matches width and marginal scale only; it does not preserve correlations among attribution columns.",
+    "pr_aug": "NEW. Original features plus the teacher probability plus the SHAP matrix with whole rows permuted within the partition. Preserves every column marginal and every correlation among attribution columns exactly, and breaks only the correspondence between a row and its own attributions. This is the control that isolates row-level attribution information; pn_aug alone cannot, because it also discards joint structure.",
+    "coral": "Source covariates whitened and recoloured to the pseudo-target covariance. Documented adaptation comparator; reads unlabelled pseudo-target covariates, never the target response.",
+    "prevalence": "Featureless reference. Constant prediction equal to the source training positive rate. Learner independent by construction and asserted to be so.",
+    "permuted_original": "Original features with downstream training labels permuted within each source project, preserving per-project class counts. Tuning also uses the permuted labels. Scored against true target labels."
+  },
+
+  "random_streams": {
+    "method": "numpy SeedSequence(run_seed).spawn, one independent child stream per role",
+    "roles": ["sampling", "teacher", "downstream", "selection", "noise", "rowperm", "labelperm"],
+    "control_roles": ["selection", "noise", "rowperm", "labelperm"],
+    "note": "Control roles are spawned from control_seed = run_seed + control_seed_offset, so a sensitivity run can vary control draws while holding the training sample, teacher and downstream fits fixed. Each stream's entropy is recorded in the checkpoint audit."
+  },
+
+  "tuning_regimes": ["independent", "shared_baseline"],
+  "tuning": "Three-fold GroupKFold over source projects, ROC-AUC, two candidates per learner, equal budget for every arm including all controls. Representations and teachers are rebuilt inside every source-validation fold. Multi-draw arms use draw 0 during tuning; the additional draws are evaluated only in the final fit, so the candidate budget stays equal across arms.",
+
+  "preprocessing": "Training-median imputation and training-constant removal. LogisticRegression and SVCRBF use signed log then RobustScaler; tree and boosting learners use neither. Only the 54 static code metrics.",
+
+  "target_information_boundary": "Target responses enter scoring only, and this is checked behaviourally, not only by function signature: permuting the target response must leave every fitted prediction and every selected hyperparameter bit-identical, and held-out rows must not change fitted imputation or scaling statistics. The coral arm reads unlabelled pseudo-target covariates and is the only transductive arm.",
+
+  "aggregation": "Average control draws first, then repeats, teachers and learners within each target, then take the equal-target mean. Weighting comparisons are additionally reported per learner and for the scale-sensitive subset alone, because the all-learner aggregate mixes learners that cannot respond. Leave-one-target-out aggregation sensitivity removes each target from the aggregate in turn without retraining and without removing that project from the other targets' source pools.",
+
+  "inference": "Descriptive fixed-benchmark effects. Target rotations share training projects, so they are not independent replications. No significance tests, confidence intervals, equivalence bounds or retrospective power claims. Harness controls demonstrate detectable signal loss or representation change; they do not establish power near zero.",
+
+  "sensitivity_runs": {
+    "teacher_grouped": "Teacher out-of-fold cross-fitting by GroupKFold over source projects instead of StratifiedKFold, so no project supplies both the teacher's training rows and its own explained rows. Seeds 101-103, all targets, both teachers, all arms, both regimes.",
+    "capacity": "128 trees or boosting rounds and four candidates per learner instead of 32 and two, with an equal budget across arms. Seeds 101-103, all targets, both teachers.",
+    "control_randomness": "Run seed fixed at 101 while control_seed_offset varies over 0, 1000 and 2000, so the training sample, teacher and downstream fits are identical and only the control draws change. Isolates control-draw variance from source-sample variance.",
+    "source_cap": "400 against 800 rows per source project, seeds 101-103, carried forward from v2."
+  }
+}
