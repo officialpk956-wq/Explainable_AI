@@ -1,0 +1,51 @@
+{
+  "version": "labelnoise-sensitivity-v1",
+  "research_question": "RQ-N: do the near-zero shap_sum effect and the small select_shap effect survive when the source labels feeding the teacher and the downstream fit are partially corrupted, at graded noise levels below the full within-project permutation the permuted_original arm already tests?",
+  "status": "FROZEN before execution. Any script implementing this analysis must reproduce the noise levels and injection rule exactly as specified below; any deviation must be disclosed, not silently corrected.",
+  "frozen_utc": "2026-09-14T00:58:38Z",
+  "frozen_at_git_commit": "26f280e2dd037ad2ffdd10402560e6b34381cdf3",
+
+  "relationship_to_existing_arms": "permuted_original (already run in v3) fully permutes each source project's labels within itself, preserving class counts but destroying every feature-label pairing (100% corrupted, in the sense that every label's pairing with its own row is broken). This sensitivity instead flips a small, graded FRACTION of labels, leaving the rest of the pairing intact, so it tests partial label-quality degradation rather than total signal destruction.",
+
+  "noise_levels": [0.05, 0.10, 0.20],
+  "injection_rule": "For a given noise level p and a given (seed, teacher) checkpoint: within each source project independently, select floor(p * n_project_rows) rows uniformly at random (without replacement) using a new 'labelnoise' random stream role, distinct from the existing 'labelperm' role used by permuted_original, and flip each selected row's label (0 becomes 1, 1 becomes 0). Target labels are never touched. This does not preserve per-project class counts (unlike permute_within_groups); it is a direct corruption, and the resulting class-count drift is reported, not corrected.",
+  "new_random_stream_role": "labelnoise",
+  "target_information_boundary": "Identical to v3: target responses enter scoring only. This sensitivity only perturbs SOURCE labels.",
+
+  "arms_to_rerun_per_noise_level": ["original", "shap_sum", "uniform_sum", "shuffled_sum",
+                                    "select_shap", "select_random"],
+  "arms_not_rerun": "p_aug, ps_aug, pn_aug, pr_aug, coral, prevalence, permuted_original are out of scope for this sensitivity.",
+  "both_teacher_and_downstream_see_noisy_labels": true,
+  "note_on_scope": "The teacher is refit on the noisy source labels (so shap_sum/select_shap weights are themselves computed from corrupted labels, not just the downstream classifier), because the research question is whether the SHAP-derived signal survives label noise, not only whether a downstream classifier is robust to it.",
+
+  "grid": {
+    "projects": ["activemq-5.8.0", "derby-10.5.1.1", "groovy-1_5_7", "hbase-0.95.2",
+                "hive-0.12.0", "jruby-1.5.0", "wicket-1.5.3"],
+    "seeds": [101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
+    "teachers": ["RandomForest", "ExtraTrees"],
+    "models": ["RandomForest", "LogisticRegression", "ExtraTrees", "XGBoost", "SVCRBF"],
+    "tuning_regimes": ["independent", "shared_baseline"],
+    "source_cap_per_project": 400,
+    "teacher_trees": 32, "teacher_depth": 5, "downstream_trees": 32,
+    "outer_tuning_folds": 3, "oof_folds": 3,
+    "note": "Everything else identical to protocol_v3.json, run once per noise level in noise_levels. Estimated cost: 3 noise levels x 6 arms, same 140-checkpoint grid as v3's main run per level -- comparable in scale to one capacity-sweep or teacher_grouped sensitivity run, not a full-factorial 13-arm rerun."
+  },
+
+  "primary_metric": "auc",
+  "scored_against": "true, unpolluted target labels (never the noisy source labels)",
+  "aggregation": "Identical to v3: average repeats, teachers and learners within target, then equal-target mean. Leave-one-target-out aggregation sensitivity reported for both new comparisons at each noise level.",
+
+  "predeclared_thresholds": {
+    "basis": "Same v3 main-run figures used in protocol_decorrelation.json, fixed before this sensitivity is executed.",
+    "observed_in_v3_main_run": {
+      "max_abs_mean_difference_shap_sum_or_select_shap_vs_matched_control": 0.002997,
+      "max_abs_single_target_excursion": 0.010179
+    },
+    "conclusion_robust_to_noise_level_p_if": "mean_difference for shap_sum-vs-uniform_sum, shap_sum-vs-shuffled_sum and select_shap-vs-select_random at that noise level stays below 0.02 ROC-AUC in absolute value AND does not change sign relative to the noise-free v3 main-run value for the same comparison.",
+    "conclusion_flagged_as_noise_sensitive_at_level_p_if": "any of the three comparisons at that level exceeds 0.02 ROC-AUC in absolute value, or changes sign.",
+    "absolute_performance_anchor": "original-arm ROC-AUC at each noise level is also compared against the noise-free v3 original-arm baseline, to report how much noise alone degrades absolute performance independent of any weighting or selection effect."
+  },
+
+  "what_this_would_show": "If the small effects are stable across all three noise levels, the v3 conclusion is not an artefact of assuming clean labels. If a comparison degrades or reverses at a noise level well below the full permutation already shown to destroy signal (permuted_original), that specifies how much label-quality erosion the reported effects can tolerate before becoming unreliable, which is a concrete, checkable claim the current manuscript does not make.",
+  "inference": "Descriptive fixed-benchmark effect, matching v3. No significance test, confidence interval or equivalence bound. Target rotations share source projects."
+}

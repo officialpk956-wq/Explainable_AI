@@ -1,0 +1,65 @@
+{
+  "version": "decorrelation-sensitivity-v1",
+  "research_question": "RQ-D: does the near-zero shap_sum-vs-matched-control effect and the small select_shap-vs-select_random effect survive once the 54 static metrics are reduced to one representative per correlated cluster?",
+  "status": "FROZEN before execution. This file, and the cluster/VIF inputs it derives from, were committed to the repository before experiment_decorrelation.py exists. Any script implementing this analysis must reproduce reduced_features exactly from clusters.csv and vif.csv as specified below; if it does not, that is a deviation and must be disclosed, not silently corrected.",
+  "frozen_utc": "2026-09-14T00:58:38Z",
+  "frozen_at_git_commit": "26f280e2dd037ad2ffdd10402560e6b34381cdf3",
+
+  "inputs": {
+    "clusters_csv": "outputs/revised/strengthening_v3/full/correlation_diagnostic/clusters.csv",
+    "clusters_csv_sha256": "b1c184e7388943f1aedab237eac0b97474a7af90630f3012757297d9a332495a",
+    "vif_csv": "outputs/revised/strengthening_v3/full/correlation_diagnostic/vif.csv",
+    "vif_csv_sha256": "d48db20884e408a159069e7d5fb71f91769e5694d8444cd266d98487f0647f04",
+    "cluster_column_used": "cluster_0.7",
+    "note": "Both files were produced by strengthened.diagnostic_correlation before this protocol was written, from the pooled 7-project static metrics only. Neither touches RealBug."
+  },
+
+  "representative_selection_rule": "Within each cluster_0.7 group, sort members by (vif ascending, feature name ascending) and take the first. Deterministic, no randomness, ties broken alphabetically. This is a single fixed rule chosen before any decorrelated-arm result exists; it is not re-derived or adjusted after execution.",
+  "reduced_features": [
+    "AvgEssential", "AvgLineBlank", "AvgLineComment", "CountClassBase",
+    "CountClassCoupled", "CountClassDerived", "CountDeclClass",
+    "CountDeclClassMethod", "CountDeclClassVariable", "CountDeclInstanceVariable",
+    "CountDeclMethodDefault", "CountDeclMethodPrivate", "CountDeclMethodProtected",
+    "CountInput_Min", "CountOutput_Min", "CountPath_Min", "MaxInheritanceTree",
+    "MaxNesting_Min", "PercentLackOfCohesion", "RatioCommentToCode"
+  ],
+  "reduced_feature_count": 20,
+
+  "arms_to_rerun": ["original", "shap_sum", "uniform_sum", "shuffled_sum",
+                    "select_shap", "select_random"],
+  "arms_not_rerun": "All other v3 arms (p_aug, ps_aug, pn_aug, pr_aug, coral, prevalence, permuted_original) are out of scope for this sensitivity and are not rerun on the reduced feature set.",
+  "selection_fraction": 0.5,
+  "selection_draw_size": 10,
+
+  "grid": {
+    "projects": ["activemq-5.8.0", "derby-10.5.1.1", "groovy-1_5_7", "hbase-0.95.2",
+                "hive-0.12.0", "jruby-1.5.0", "wicket-1.5.3"],
+    "seeds": [101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
+    "teachers": ["RandomForest", "ExtraTrees"],
+    "models": ["RandomForest", "LogisticRegression", "ExtraTrees", "XGBoost", "SVCRBF"],
+    "tuning_regimes": ["independent", "shared_baseline"],
+    "source_cap_per_project": 400,
+    "teacher_trees": 32, "teacher_depth": 5, "downstream_trees": 32,
+    "outer_tuning_folds": 3, "oof_folds": 3,
+    "note": "Everything else identical to protocol_v3.json. Only the feature list is reduced."
+  },
+
+  "primary_metric": "auc",
+  "aggregation": "Identical to v3: average repeats, teachers and learners within target, then equal-target mean. Leave-one-target-out aggregation sensitivity reported for both new comparisons.",
+
+  "predeclared_thresholds": {
+    "basis": "Derived from the already-completed v3 main run (outputs/revised/strengthening_v3/full/summary.csv), before this sensitivity is executed. Using prior completed results to set a threshold for a new prospective test is standard practice; the numbers below are fixed now and are not revisited after the decorrelated arms are run.",
+    "observed_in_v3_main_run": {
+      "max_abs_mean_difference_shap_sum_or_select_shap_vs_matched_control": 0.002997,
+      "max_abs_single_target_excursion": 0.010179,
+      "synthetic_zero_signal_offset_select_shap_vs_select_random":
+        "0.006056 (outputs/revised/synthetic_power/verdict.json, alpha=0.0)"
+    },
+    "conclusion_unchanged_if": "mean_difference for shap_sum-vs-uniform_sum, shap_sum-vs-shuffled_sum and select_shap-vs-select_random on the reduced feature set stays below 0.02 ROC-AUC in absolute value (roughly 2x the widest single-target excursion already observed on the full feature set) AND does not change sign relative to the v3 main-run value for the same comparison.",
+    "conclusion_flagged_as_decorrelation_sensitive_if": "any of the three comparisons exceeds 0.02 ROC-AUC in absolute value, or changes sign.",
+    "select_shap_specific_check": "select_shap-vs-select_random on the reduced feature set is additionally compared against the already-established synthetic zero-signal offset of 0.006056: if the decorrelated real-data effect remains at or below that offset, the zero-signal-bias explanation for the original 54-feature result is considered to extend to the decorrelated case; if it clearly exceeds 0.006056, that extension is not supported and must be reported as such."
+  },
+
+  "what_this_would_show": "If the small effects persist essentially unchanged after decorrelation, the correlation-cluster/dilution mechanism identified by strengthened.diagnostic_correlation is not the (sole) explanation for shap_sum and select_shap being near-zero on the 54-feature set, and the null must be attributed to something else. If the effects change substantially, collinearity was a material contributor and the 54-feature result should not be read as evidence against attribution utility in general, only against attribution utility under uncontrolled collinearity.",
+  "inference": "Descriptive fixed-benchmark effect, matching v3. No significance test, confidence interval or equivalence bound. Target rotations share source projects."
+}
